@@ -1,13 +1,13 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/config/app_page_config.dart';
-import 'package:tmdb_app/features/main/di/main_di.dart';
+import 'package:tmdb_app/features/home/di/home_di.dart';
 import 'package:tmdb_app/routes/app_routes.dart';
 
 class AppRouteManager {
   static AppRouteManager? _instance;
 
   AppRouteManager._() {
-    addPage(AppPage(route: AppRoutes.main, pageDependency: MainPageDI()));
+    addPage(AppPage(route: AppRoutes.home, pageDependency: MainPageDI()));
   }
 
   static AppRouteManager get instance {

@@ -1,7 +1,8 @@
 ﻿import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:tmdb_app/data/models/movie_model.dart';
-import 'package:tmdb_app/features/popular_movies/usecases/search_movies_usecase.dart';
+import 'package:tmdb_app/features/home/usecases/search_movies_usecase.dart';
+import 'package:dio/dio.dart';
 
 class SearchMoviesController extends ChangeNotifier {
   final SearchMoviesUsecase _searchMoviesUsecase;
@@ -48,7 +49,17 @@ class SearchMoviesController extends ChangeNotifier {
       final response = await _searchMoviesUsecase(_query);
       _movies = response.movies;
     } catch (e) {
-      _errorMessage = 'Erro ao buscar filmes: $e';
+      if (e is DioException) {
+        if (e.response?.statusCode == 429) {
+          _errorMessage = 'Limite de requisições atingido. Tente novamente mais tarde.';
+        } else if (e.response?.statusCode != null && e.response!.statusCode! >= 500) {
+          _errorMessage = 'Serviço indisponível. Tente novamente mais tarde.';
+        } else {
+          _errorMessage = 'Erro ao buscar filmes: ${e.message}';
+        }
+      } else {
+        _errorMessage = e.toString();
+      }
     } finally {
       _isLoading = false;
       notifyListeners();

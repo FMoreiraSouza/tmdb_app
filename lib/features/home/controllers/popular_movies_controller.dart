@@ -1,7 +1,8 @@
 ﻿import 'package:flutter/foundation.dart';
 import 'package:tmdb_app/data/models/movie_model.dart';
-import 'package:tmdb_app/features/popular_movies/usecases/get_movies_details_usecase.dart';
-import 'package:tmdb_app/features/popular_movies/usecases/get_popular_movies_usecase.dart';
+import 'package:tmdb_app/features/home/usecases/get_movies_details_usecase.dart';
+import 'package:tmdb_app/features/home/usecases/get_popular_movies_usecase.dart';
+import 'package:dio/dio.dart';
 
 class PopularMoviesController extends ChangeNotifier {
   final GetPopularMoviesUsecase _getPopularMovies;
@@ -42,9 +43,19 @@ class PopularMoviesController extends ChangeNotifier {
           runtime: details.runtime,
         );
       }
-      _isDataLoaded = true; // Marca os dados como carregados
+      _isDataLoaded = true;
     } catch (e) {
-      _errorMessage = 'Erro ao carregar filmes: $e';
+      if (e is DioException) {
+        if (e.response?.statusCode == 429) {
+          _errorMessage = 'Limite de requisições atingido. Tente novamente mais tarde.';
+        } else if (e.response?.statusCode != null && e.response!.statusCode! >= 500) {
+          _errorMessage = 'Serviço indisponível. Tente novamente mais tarde.';
+        } else {
+          _errorMessage = 'Erro ao carregar filmes: ${e.message}';
+        }
+      } else {
+        _errorMessage = e.toString();
+      }
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
-import 'package:tmdb_app/features/search_movies/controllers/search_movies_controller.dart';
+import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
 
 class SearchMoviesWidget extends StatefulWidget {
   final SearchMoviesController controller;
@@ -74,22 +74,47 @@ class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
                 animation: widget.controller,
                 builder: (context, _) {
                   if (widget.controller.isLoading) {
-                    return const Center(child: SpinKitCircle(color: Colors.blue, size: 50.0));
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SpinKitCircle(color: Colors.blue, size: 50.0),
+                          SizedBox(height: 16),
+                          Text(
+                            'Buscando filmes...',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   if (widget.controller.errorMessage != null) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          const Icon(Icons.error_outline, color: Colors.red, size: 40),
+                          const SizedBox(height: 8),
                           Text(
                             widget.controller.errorMessage!,
-                            style: const TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red, fontSize: 16),
+                            textAlign: TextAlign.center,
                           ),
+                          const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => widget.controller.setQuery(_searchController.text),
                             child: const Text('Tentar novamente'),
                           ),
                         ],
+                      ),
+                    );
+                  }
+                  if (widget.controller.movies.isEmpty && _searchController.text.isNotEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Nenhum filme encontrado para esta busca.',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        textAlign: TextAlign.center,
                       ),
                     );
                   }

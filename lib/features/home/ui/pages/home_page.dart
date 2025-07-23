@@ -1,23 +1,29 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/di/app_di.dart';
-import 'package:tmdb_app/features/popular_movies/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/features/popular_movies/ui/pages/popular_movies_page.dart';
-import 'package:tmdb_app/features/search_movies/controllers/search_movies_controller.dart';
-import 'package:tmdb_app/features/search_movies/ui/pages/search_movies_page.dart';
+import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
+import 'package:tmdb_app/features/home/ui/widgets/popular_movies_widget.dart';
+import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
+import 'package:tmdb_app/features/home/ui/widgets/search_movies_widget.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    PopularMoviesWidget(controller: AppDI.instance.get<PopularMoviesController>()),
-    SearchMoviesWidget(controller: AppDI.instance.get<SearchMoviesController>()),
+    PopularMoviesWidget(
+      key: const Key('popular_movies'),
+      controller: AppDI.instance.get<PopularMoviesController>(),
+    ),
+    SearchMoviesWidget(
+      key: const Key('search_movies'),
+      controller: AppDI.instance.get<SearchMoviesController>(),
+    ),
   ];
 
   @override
@@ -27,7 +33,13 @@ class _MainPageState extends State<MainPage> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         child: Stack(
           children: [
-            _pages[_currentIndex],
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: _pages[_currentIndex],
+            ),
             Positioned(
               left: 0,
               right: 0,
@@ -46,7 +58,7 @@ class _MainPageState extends State<MainPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildSwitchButton(
-                          icon: Icons.home,
+                          path: 'assets/icons/home.png',
                           isActive: _currentIndex == 0,
                           onTap: () {
                             setState(() {
@@ -56,7 +68,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                         const SizedBox(width: 8),
                         _buildSwitchButton(
-                          icon: Icons.search,
+                          path: 'assets/icons/search.png',
                           isActive: _currentIndex == 1,
                           onTap: () {
                             setState(() {
@@ -77,19 +89,23 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildSwitchButton({
-    required IconData icon,
+    required String path,
     required bool isActive,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        width: 60,
+        height: 50,
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue : Colors.transparent,
-          borderRadius: BorderRadius.circular(50),
+          color: isActive ? const Color(0xFF2B64DF) : Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
         ),
-        child: Icon(icon, color: Colors.white, size: 30),
+        child: Image.asset(path, color: Colors.white, height: 24, width: 24),
       ),
     );
   }

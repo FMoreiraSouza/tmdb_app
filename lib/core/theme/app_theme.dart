@@ -12,7 +12,7 @@ ThemeData appTheme() {
     cardTheme: CardThemeData(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: const Color(0xFF2A2F38),
+      color: const Color(0xFF292E34),
     ),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white, fontSize: 16),

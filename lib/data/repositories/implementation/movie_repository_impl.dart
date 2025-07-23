@@ -1,16 +1,26 @@
 ﻿import 'package:tmdb_app/core/constants/api_constants.dart';
 import 'package:tmdb_app/core/network/dio_client.dart';
+import 'package:tmdb_app/core/network/driver/connectivity_driver.dart';
 import 'package:tmdb_app/data/dto/response/movie_response_dto.dart';
 import 'package:tmdb_app/data/models/movie_model.dart';
 import 'package:tmdb_app/data/repositories/movie_repository.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final DioClient _dioClient;
+  final ConnectivityDriver _connectivityDriver;
 
-  MovieRepositoryImpl(this._dioClient);
+  MovieRepositoryImpl(this._dioClient, this._connectivityDriver);
+
+  Future<void> _checkConnectivity() async {
+    final isOnline = await _connectivityDriver.isOnline();
+    if (!isOnline) {
+      throw Exception('Sem conexão com a internet. Verifique sua rede e tente novamente.');
+    }
+  }
 
   @override
   Future<MovieResponseDto> getPopularMovies() async {
+    await _checkConnectivity();
     try {
       final response = await _dioClient.dio.get(
         'movie/popular',
@@ -18,12 +28,13 @@ class MovieRepositoryImpl implements MovieRepository {
       );
       return MovieResponseDto.fromJson(response.data);
     } catch (e) {
-      throw Exception('Failed to fetch popular movies: $e');
+      rethrow;
     }
   }
 
   @override
   Future<MovieResponseDto> searchMovies(String query) async {
+    await _checkConnectivity();
     try {
       final response = await _dioClient.dio.get(
         'search/movie',
@@ -31,12 +42,13 @@ class MovieRepositoryImpl implements MovieRepository {
       );
       return MovieResponseDto.fromJson(response.data);
     } catch (e) {
-      throw Exception('Failed to search movies: $e');
+      rethrow;
     }
   }
 
   @override
   Future<MovieModel> getMovieDetails(int movieId) async {
+    await _checkConnectivity();
     try {
       final response = await _dioClient.dio.get(
         'movie/$movieId',
@@ -44,7 +56,7 @@ class MovieRepositoryImpl implements MovieRepository {
       );
       return MovieModel.fromJson(response.data);
     } catch (e) {
-      throw Exception('Failed to fetch movie details: $e');
+      rethrow;
     }
   }
 }

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
-import 'package:tmdb_app/features/popular_movies/controllers/popular_movies_controller.dart';
+import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
 
 class PopularMoviesWidget extends StatefulWidget {
   final PopularMoviesController controller;
@@ -42,19 +42,46 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
         animation: widget.controller,
         builder: (context, _) {
           if (widget.controller.isLoading) {
-            return const Center(child: SpinKitCircle(color: Colors.blue, size: 50.0));
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitCircle(color: Colors.blue, size: 50.0),
+                  SizedBox(height: 16),
+                  Text(
+                    'Carregando filmes populares...',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ],
+              ),
+            );
           }
           if (widget.controller.errorMessage != null) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(widget.controller.errorMessage!, style: const TextStyle(color: Colors.red)),
+                  const Icon(Icons.error_outline, color: Colors.red, size: 40),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.controller.errorMessage!,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => widget.controller.fetchPopularMovies(forceRefresh: true),
                     child: const Text('Tentar novamente'),
                   ),
                 ],
+              ),
+            );
+          }
+          if (widget.controller.movies.isEmpty) {
+            return const Center(
+              child: Text(
+                'Nenhum filme encontrado.',
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             );
           }
@@ -79,13 +106,13 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                   ),
                   title: Text(
                     movie.title,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Row(
                     children: [
-                      const Icon(Icons.access_time, color: Colors.grey, size: 20),
+                      const Icon(Icons.access_time, color: Colors.grey, size: 12),
                       const SizedBox(width: 4),
                       Text(
                         formatDuration(movie.runtime),
@@ -97,8 +124,8 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFF2B64DF),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
                       child: Text(
