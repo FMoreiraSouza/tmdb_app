@@ -20,7 +20,6 @@ class SearchMoviesController extends ChangeNotifier {
 
   void setQuery(String query) {
     final trimmedQuery = query.trim();
-    // Evita processamento se a query não mudou
     if (trimmedQuery == _query) return;
 
     _query = trimmedQuery;
@@ -68,7 +67,6 @@ class SearchMoviesController extends ChangeNotifier {
   @override
   void dispose() {
     _debounce?.cancel();
-    _movies = [];
     super.dispose();
   }
 }

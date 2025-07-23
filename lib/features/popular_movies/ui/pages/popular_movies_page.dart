@@ -3,18 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
 import 'package:tmdb_app/features/popular_movies/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/routes/app_routes.dart';
 
-class PopularMoviesPage extends StatefulWidget {
+class PopularMoviesWidget extends StatefulWidget {
   final PopularMoviesController controller;
 
-  const PopularMoviesPage({super.key, required this.controller});
+  const PopularMoviesWidget({super.key, required this.controller});
 
   @override
-  State<PopularMoviesPage> createState() => _PopularMoviesPageState();
+  State<PopularMoviesWidget> createState() => _PopularMoviesWidgetState();
 }
 
-class _PopularMoviesPageState extends State<PopularMoviesPage> {
+class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   @override
   void initState() {
     super.initState();
@@ -38,18 +37,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('Filmes Populares'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.searchMovies);
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Filmes Populares')),
       body: AnimatedBuilder(
         animation: widget.controller,
         builder: (context, _) {
@@ -63,7 +51,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
                 children: [
                   Text(widget.controller.errorMessage!, style: const TextStyle(color: Colors.red)),
                   ElevatedButton(
-                    onPressed: widget.controller.fetchPopularMovies,
+                    onPressed: () => widget.controller.fetchPopularMovies(forceRefresh: true),
                     child: const Text('Tentar novamente'),
                   ),
                 ],
@@ -71,7 +59,6 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
             );
           }
           return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
             itemCount: widget.controller.movies.length,
             itemBuilder: (context, index) {
               final movie = widget.controller.movies[index];
@@ -101,7 +88,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
                       const Icon(Icons.access_time, color: Colors.grey, size: 20),
                       const SizedBox(width: 4),
                       Text(
-                        'Duração: ${formatDuration(movie.runtime)}',
+                        formatDuration(movie.runtime),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
@@ -116,7 +103,11 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
                     child: Center(
                       child: Text(
                         (movie.voteAverage * 10).round().toString(),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ),

@@ -4,16 +4,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
 import 'package:tmdb_app/features/search_movies/controllers/search_movies_controller.dart';
 
-class SearchMoviesPage extends StatefulWidget {
+class SearchMoviesWidget extends StatefulWidget {
   final SearchMoviesController controller;
 
-  const SearchMoviesPage({super.key, required this.controller});
+  const SearchMoviesWidget({super.key, required this.controller});
 
   @override
-  State<SearchMoviesPage> createState() => _SearchMoviesPageState();
+  State<SearchMoviesWidget> createState() => _SearchMoviesWidgetState();
 }
 
-class _SearchMoviesPageState extends State<SearchMoviesPage> {
+class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
   final _searchController = TextEditingController();
 
   @override
@@ -39,30 +39,34 @@ class _SearchMoviesPageState extends State<SearchMoviesPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(title: const Text('Buscar Filmes')),
+        appBar: AppBar(title: const Text('Busca'), automaticallyImplyLeading: false),
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Digite o nome do filme...',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.white12,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF292E34),
+                  borderRadius: BorderRadius.circular(30.0),
+                  border: Border.all(color: Colors.grey, width: 0.2),
                 ),
-                style: const TextStyle(color: Colors.white),
-                textInputAction: TextInputAction.search,
-                onSubmitted: (_) {
-                  FocusScope.of(context).unfocus();
-                },
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar filmes',
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    filled: false,
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  ),
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) {
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
               ),
             ),
             Expanded(
@@ -86,19 +90,6 @@ class _SearchMoviesPageState extends State<SearchMoviesPage> {
                             child: const Text('Tentar novamente'),
                           ),
                         ],
-                      ),
-                    );
-                  }
-                  if (widget.controller.movies.isEmpty && _searchController.text.isNotEmpty) {
-                    return const Center(
-                      child: Text('Nenhum filme encontrado', style: TextStyle(color: Colors.white)),
-                    );
-                  }
-                  if (widget.controller.movies.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Digite para buscar filmes',
-                        style: TextStyle(color: Colors.white),
                       ),
                     );
                   }

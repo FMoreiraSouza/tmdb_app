@@ -8,26 +8,20 @@ import 'package:tmdb_app/features/search_movies/controllers/search_movies_contro
 import 'package:tmdb_app/features/popular_movies/usecases/search_movies_usecase.dart';
 
 class AppDI {
+  static final GetIt _getIt = GetIt.instance;
+
+  static GetIt get instance => _getIt;
+
   static void init() {
-    final getIt = GetIt.instance;
-
-    if (!getIt.isRegistered<MovieRepositoryImpl>()) {
-      getIt.registerSingleton<MovieRepositoryImpl>(MovieRepositoryImpl(DioDiManager.getDio()));
-    }
-
-    if (!getIt.isRegistered<PopularMoviesController>()) {
-      getIt.registerSingleton<PopularMoviesController>(
-        PopularMoviesController(
-          GetPopularMoviesUsecase(getIt.get<MovieRepositoryImpl>()),
-          GetMovieDetailsUsecase(getIt.get<MovieRepositoryImpl>()),
-        ),
-      );
-    }
-
-    if (!getIt.isRegistered<SearchMoviesController>()) {
-      getIt.registerSingleton<SearchMoviesController>(
-        SearchMoviesController(SearchMoviesUsecase(getIt.get<MovieRepositoryImpl>())),
-      );
-    }
+    _getIt.registerSingleton<MovieRepositoryImpl>(MovieRepositoryImpl(DioDiManager.getDio()));
+    _getIt.registerSingleton<PopularMoviesController>(
+      PopularMoviesController(
+        GetPopularMoviesUsecase(_getIt.get<MovieRepositoryImpl>()),
+        GetMovieDetailsUsecase(_getIt.get<MovieRepositoryImpl>()),
+      ),
+    );
+    _getIt.registerSingleton<SearchMoviesController>(
+      SearchMoviesController(SearchMoviesUsecase(_getIt.get<MovieRepositoryImpl>())),
+    );
   }
 }

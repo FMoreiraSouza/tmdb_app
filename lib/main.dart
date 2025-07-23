@@ -30,7 +30,7 @@ class TMDBApp extends StatelessWidget {
       title: 'TMDB App',
       debugShowCheckedModeBanner: false,
       theme: appTheme(),
-      initialRoute: AppRoutes.popularMovies,
+      initialRoute: AppRoutes.main,
       routes: AppRouteManager.instance.getPages(),
     );
   }

@@ -12,12 +12,15 @@ class PopularMoviesController extends ChangeNotifier {
   List<MovieModel> _movies = [];
   bool _isLoading = false;
   String? _errorMessage;
+  bool _isDataLoaded = false;
 
   List<MovieModel> get movies => _movies;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchPopularMovies() async {
+  Future<void> fetchPopularMovies({bool forceRefresh = false}) async {
+    if (_isDataLoaded && !forceRefresh) return;
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -39,6 +42,7 @@ class PopularMoviesController extends ChangeNotifier {
           runtime: details.runtime,
         );
       }
+      _isDataLoaded = true; // Marca os dados como carregados
     } catch (e) {
       _errorMessage = 'Erro ao carregar filmes: $e';
     } finally {
