@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:tmdb_app/core/di/app_di.dart';
+import 'package:tmdb_app/core/di/dio_di_manager.dart';
 import 'package:tmdb_app/core/theme/app_theme.dart';
-import 'package:tmdb_app/features/popular_movies/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/features/popular_movies/di/popular_movies_di.dart';
-import 'package:tmdb_app/features/popular_movies/ui/pages/popular_movies_page.dart';
+import 'package:tmdb_app/routes/app_route_manager.dart';
+import 'package:tmdb_app/routes/app_routes.dart';
 
-void main() {
-  setupDependencies();
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  DioDiManager.registerApi();
+
+  AppDI.init();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  runApp(const TMDBApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TMDBApp extends StatelessWidget {
+  const TMDBApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TMDB App',
+      debugShowCheckedModeBanner: false,
       theme: appTheme(),
-      home: PopularMoviesPage(controller: getIt<PopularMoviesController>()),
+      initialRoute: AppRoutes.popularMovies,
+      routes: AppRouteManager.instance.getPages(),
     );
   }
 }

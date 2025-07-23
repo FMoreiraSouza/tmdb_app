@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
 import 'package:tmdb_app/features/popular_movies/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/features/popular_movies/di/popular_movies_di.dart' as di;
-import 'package:tmdb_app/features/search_movies/controllers/search_movies_controller.dart';
-import 'package:tmdb_app/features/search_movies/ui/pages/search_movies_page.dart';
+import 'package:tmdb_app/routes/app_routes.dart';
 
 class PopularMoviesPage extends StatefulWidget {
   final PopularMoviesController controller;
@@ -25,22 +23,29 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
     });
   }
 
+  String formatDuration(int? minutes) {
+    if (minutes == null || minutes <= 0) return 'N/A';
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    return '${hours}h${remainingMinutes}m';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Filmes Populares'),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SearchMoviesPage(controller: di.getIt<SearchMoviesController>()),
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutes.searchMovies);
             },
           ),
         ],
@@ -93,10 +98,10 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
                   ),
                   subtitle: Row(
                     children: [
-                      Icon(Icons.access_time, color: Colors.grey, size: 20),
-                      SizedBox(width: 4),
+                      const Icon(Icons.access_time, color: Colors.grey, size: 20),
+                      const SizedBox(width: 4),
                       Text(
-                        'Nota: ${movie.voteAverage.toStringAsFixed(1)}',
+                        'Duração: ${formatDuration(movie.runtime)}',
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
@@ -110,7 +115,7 @@ class _PopularMoviesPageState extends State<PopularMoviesPage> {
                     ),
                     child: Center(
                       child: Text(
-                        movie.voteAverage.toStringAsFixed(1),
+                        (movie.voteAverage * 10).round().toString(),
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
