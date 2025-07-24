@@ -64,11 +64,11 @@ O projeto segue uma arquitetura modular com separação clara entre apresentaç�
 
 ## 📱 Responsividade para Diferentes Resoluções
 
-O **TMDB App** foi projetado para funcionar em dispositivos com diferentes resoluções (de smartphones com telas pequenas a tablets com telas grandes, em orientações portrait e landscape). A responsividade é garantida por:
+O **TMDB App** foi projetado para funcionar em dispositivos com diferentes resoluções (de smartphones a tablets, em orientações portrait e landscape). A responsividade é garantida por:
 
 - **ResponsivityUtils**: Classe utilitária que calcula dinamicamente:
   - **Padding e Margens**: Ajustados com base em porcentagens do tamanho da tela (`shortestSide`, `screenHeight`) para evitar elementos cortados ou desproporcionais.
-  - **Tamanhos de Texto e Ícones**: Escalonados com `responsiveSize` para manter legibilidade e proporção em telas de baixa (ex.: 480x800) e alta resolução (ex.: 1440x3200).
+  - **Tamanhos de Texto e Ícones**: Escalonados com `responsiveSize` para manter legibilidade e proporção em diferentes tamanhos de tela.
   - **Bordas Arredondadas**: Ajustadas com `responsiveBorderRadius` para consistência visual.
 - **Layout Adaptável**:
   - Uso de `Flexible` e `Expanded` para garantir que elementos como pôsteres e textos se ajustem ao espaço disponível.
