@@ -17,7 +17,7 @@ class AppDI {
   static void init() {
     _getIt.registerSingleton<ConnectivityDriver>(ConnectivityDriverImpl());
     _getIt.registerSingleton<MovieRepositoryImpl>(
-      MovieRepositoryImpl(DioDiManager.getDio(), _getIt.get<ConnectivityDriver>()),
+      MovieRepositoryImpl(DioDIManager.getDio(), _getIt.get<ConnectivityDriver>()),
     );
     _getIt.registerSingleton<PopularMoviesController>(
       PopularMoviesController(

@@ -1,17 +1,15 @@
 ﻿class MovieModel {
   final int id;
   final String title;
-  final String? posterPath;
   final double voteAverage;
-  final double? popularity;
+  final String? posterPath;
   final int? runtime;
 
   MovieModel({
     required this.id,
     required this.title,
-    this.posterPath,
     required this.voteAverage,
-    this.popularity,
+    this.posterPath,
     this.runtime,
   });
 
@@ -19,9 +17,8 @@
     return MovieModel(
       id: json['id'],
       title: json['title'],
-      posterPath: json['poster_path'],
       voteAverage: (json['vote_average'] as num).toDouble(),
-      popularity: (json['popularity'] as num?)?.toDouble(),
+      posterPath: json['poster_path'],
       runtime: json['runtime'] as int?,
     );
   }

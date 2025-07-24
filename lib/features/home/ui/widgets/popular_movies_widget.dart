@@ -57,7 +57,7 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget>
                     SpinKitCircle(color: Colors.blue, size: 50.0),
                     SizedBox(height: 16),
                     Text(
-                      'Carregando filmes populares...',
+                      'Carregando filmes populares',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ],

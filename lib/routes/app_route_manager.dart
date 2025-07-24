@@ -7,7 +7,7 @@ class AppRouteManager {
   static AppRouteManager? _instance;
 
   AppRouteManager._() {
-    addPage(AppPage(route: AppRoutes.home, pageDependency: MainPageDI()));
+    addPage(AppPage(route: AppRoutes.home, pageDependency: HomePageDI()));
   }
 
   static AppRouteManager get instance {

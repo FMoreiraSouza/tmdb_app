@@ -42,18 +42,16 @@ class PopularMoviesController extends ChangeNotifier {
             _movies[i] = MovieModel(
               id: movie.id,
               title: movie.title,
-              posterPath: movie.posterPath,
               voteAverage: movie.voteAverage,
-              popularity: movie.popularity,
+              posterPath: movie.posterPath,
               runtime: details.runtime,
             );
           } catch (e) {
             _movies[i] = MovieModel(
               id: _movies[i].id,
               title: _movies[i].title,
-              posterPath: _movies[i].posterPath,
               voteAverage: _movies[i].voteAverage,
-              popularity: _movies[i].popularity,
+              posterPath: _movies[i].posterPath,
               runtime: null,
             );
           }
@@ -80,14 +78,6 @@ class PopularMoviesController extends ChangeNotifier {
 
   void _updateState(int newState) {
     _state.currentState = newState;
-    notifyListeners();
-  }
-
-  void reset() {
-    _movies = [];
-    _isDataLoaded = false;
-    _isLoading = false;
-    _updateState(WidgetStates.loadingState);
     notifyListeners();
   }
 }

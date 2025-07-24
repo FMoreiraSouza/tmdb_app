@@ -84,7 +84,7 @@ class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
                             SpinKitCircle(color: Colors.blue, size: 50.0),
                             SizedBox(height: 16),
                             Text(
-                              'Buscando filmes...',
+                              'Buscando filmes',
                               style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ],

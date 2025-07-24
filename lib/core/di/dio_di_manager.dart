@@ -1,7 +1,7 @@
 ﻿import 'package:get_it/get_it.dart';
 import 'package:tmdb_app/core/network/dio_client.dart';
 
-class DioDiManager {
+class DioDIManager {
   static final GetIt _getIt = GetIt.instance;
 
   static void registerApi() {

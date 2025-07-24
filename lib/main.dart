@@ -9,7 +9,7 @@ import 'package:tmdb_app/routes/app_routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  DioDiManager.registerApi();
+  DioDIManager.registerApi();
 
   AppDI.init();
 

@@ -85,10 +85,4 @@ class SearchMoviesController extends ChangeNotifier {
     _debounce?.cancel();
     notifyListeners();
   }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
 }
