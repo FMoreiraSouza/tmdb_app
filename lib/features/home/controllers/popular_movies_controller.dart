@@ -1,8 +1,9 @@
 ﻿import 'package:flutter/foundation.dart';
+import 'package:tmdb_app/core/enums/widget_states.dart';
+import 'package:tmdb_app/core/network/failure.dart';
 import 'package:tmdb_app/data/models/movie_model.dart';
 import 'package:tmdb_app/features/home/usecases/get_movies_details_usecase.dart';
 import 'package:tmdb_app/features/home/usecases/get_popular_movies_usecase.dart';
-import 'package:dio/dio.dart';
 
 class PopularMoviesController extends ChangeNotifier {
   final GetPopularMoviesUsecase _getPopularMovies;
@@ -12,53 +13,81 @@ class PopularMoviesController extends ChangeNotifier {
 
   List<MovieModel> _movies = [];
   bool _isLoading = false;
-  String? _errorMessage;
   bool _isDataLoaded = false;
+  final WidgetStates _state = WidgetStates(currentState: WidgetStates.loadingState);
 
   List<MovieModel> get movies => _movies;
   bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  int get state => _state.currentState;
 
   Future<void> fetchPopularMovies({bool forceRefresh = false}) async {
     if (_isDataLoaded && !forceRefresh) return;
 
     _isLoading = true;
-    _errorMessage = null;
+    _updateState(WidgetStates.loadingState);
     notifyListeners();
 
     try {
       final response = await _getPopularMovies();
       _movies = response.movies;
 
-      // Busca detalhes (runtime) para cada filme
-      for (var i = 0; i < _movies.length; i++) {
-        final movie = _movies[i];
-        final details = await _getMovieDetails(movie.id);
-        _movies[i] = MovieModel(
-          id: movie.id,
-          title: movie.title,
-          posterPath: movie.posterPath,
-          voteAverage: movie.voteAverage,
-          popularity: movie.popularity,
-          runtime: details.runtime,
-        );
-      }
-      _isDataLoaded = true;
-    } catch (e) {
-      if (e is DioException) {
-        if (e.response?.statusCode == 429) {
-          _errorMessage = 'Limite de requisições atingido. Tente novamente mais tarde.';
-        } else if (e.response?.statusCode != null && e.response!.statusCode! >= 500) {
-          _errorMessage = 'Serviço indisponível. Tente novamente mais tarde.';
-        } else {
-          _errorMessage = 'Erro ao carregar filmes: ${e.message}';
-        }
+      if (_movies.isEmpty) {
+        _isDataLoaded = true;
+        _updateState(WidgetStates.emptyState);
       } else {
-        _errorMessage = e.toString();
+        for (var i = 0; i < _movies.length; i++) {
+          try {
+            final movie = _movies[i];
+            final details = await _getMovieDetails(movie.id);
+            _movies[i] = MovieModel(
+              id: movie.id,
+              title: movie.title,
+              posterPath: movie.posterPath,
+              voteAverage: movie.voteAverage,
+              popularity: movie.popularity,
+              runtime: details.runtime,
+            );
+          } catch (e) {
+            _movies[i] = MovieModel(
+              id: _movies[i].id,
+              title: _movies[i].title,
+              posterPath: _movies[i].posterPath,
+              voteAverage: _movies[i].voteAverage,
+              popularity: _movies[i].popularity,
+              runtime: null,
+            );
+          }
+        }
+        _isDataLoaded = true;
+        _updateState(WidgetStates.successState);
       }
+    } catch (e) {
+      _isDataLoaded = false;
+      _handleError(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void _handleError(dynamic error) {
+    if (error is ConnectionException) {
+      _updateState(WidgetStates.noConnection);
+    } else {
+      _updateState(WidgetStates.errorState);
+    }
+  }
+
+  void _updateState(int newState) {
+    _state.currentState = newState;
+    notifyListeners();
+  }
+
+  void reset() {
+    _movies = [];
+    _isDataLoaded = false;
+    _isLoading = false;
+    _updateState(WidgetStates.loadingState);
+    notifyListeners();
   }
 }

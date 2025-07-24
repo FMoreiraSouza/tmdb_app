@@ -1,7 +1,7 @@
 ﻿import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
+import 'package:tmdb_app/core/network/failure.dart';
 
 class DioClient {
   final Dio _dio;
@@ -28,31 +28,20 @@ class DioClient {
         onError: (DioException e, handler) {
           log('Error: ${e.message}');
           if (e.response != null) {
-            switch (e.response!.statusCode) {
-              case 401:
-                throw DioException(
-                  requestOptions: e.requestOptions,
-                  response: e.response,
-                  error: 'Erro de autenticação: API Key inválida',
-                );
-              case 404:
-                throw DioException(
-                  requestOptions: e.requestOptions,
-                  response: e.response,
-                  error: 'Recurso não encontrado',
-                );
-              default:
-                throw DioException(
-                  requestOptions: e.requestOptions,
-                  response: e.response,
-                  error: 'Erro na requisição: ${e.message}',
-                );
+            final statusCode = e.response?.statusCode;
+            if (statusCode == 401) {
+              throw AuthorizationException('Erro de autenticação: API Key inválida');
+            } else if (statusCode == 404) {
+              throw RequestNotFoundException('Recurso não encontrado');
+            } else if (statusCode == 429) {
+              throw BadRequestException('Limite de requisições atingido');
+            } else if ((statusCode ?? -1) >= 500) {
+              throw UnavaliableServiceException('Serviço indisponível');
+            } else {
+              throw Failure('Erro na requisição: ${e.message}');
             }
           } else {
-            throw DioException(
-              requestOptions: e.requestOptions,
-              error: 'Falha de conexão: ${e.message}',
-            );
+            throw ConnectionException('Falha de conexão: ${e.message}');
           }
         },
       ),

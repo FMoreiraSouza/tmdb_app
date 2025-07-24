@@ -1,8 +1,9 @@
 ﻿import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:tmdb_app/core/enums/widget_states.dart';
+import 'package:tmdb_app/core/network/failure.dart';
 import 'package:tmdb_app/data/models/movie_model.dart';
 import 'package:tmdb_app/features/home/usecases/search_movies_usecase.dart';
-import 'package:dio/dio.dart';
 
 class SearchMoviesController extends ChangeNotifier {
   final SearchMoviesUsecase _searchMoviesUsecase;
@@ -12,12 +13,12 @@ class SearchMoviesController extends ChangeNotifier {
 
   List<MovieModel> _movies = [];
   bool _isLoading = false;
-  String? _errorMessage;
   String _query = '';
+  final WidgetStates _state = WidgetStates(currentState: WidgetStates.successState);
 
   List<MovieModel> get movies => _movies;
   bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  int get state => _state.currentState;
 
   void setQuery(String query) {
     final trimmedQuery = query.trim();
@@ -28,8 +29,8 @@ class SearchMoviesController extends ChangeNotifier {
 
     if (_query.isEmpty) {
       _movies = [];
-      _errorMessage = null;
       _isLoading = false;
+      _updateState(WidgetStates.successState);
       notifyListeners();
     } else {
       _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -42,35 +43,45 @@ class SearchMoviesController extends ChangeNotifier {
     if (_query.isEmpty) return;
 
     _isLoading = true;
-    _errorMessage = null;
+    _updateState(WidgetStates.loadingState);
     notifyListeners();
 
     try {
       final response = await _searchMoviesUsecase(_query);
       _movies = response.movies;
-    } catch (e) {
-      if (e is DioException) {
-        if (e.response?.statusCode == 429) {
-          _errorMessage = 'Limite de requisições atingido. Tente novamente mais tarde.';
-        } else if (e.response?.statusCode != null && e.response!.statusCode! >= 500) {
-          _errorMessage = 'Serviço indisponível. Tente novamente mais tarde.';
-        } else {
-          _errorMessage = 'Erro ao buscar filmes: ${e.message}';
-        }
+      if (_movies.isEmpty) {
+        _updateState(WidgetStates.emptyState);
       } else {
-        _errorMessage = e.toString();
+        _updateState(WidgetStates.successState);
       }
+    } catch (e) {
+      _checkErrorState(e);
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
+  void _checkErrorState(dynamic error) {
+    switch (error.runtimeType) {
+      case const (ConnectionException):
+        _updateState(WidgetStates.noConnection);
+        break;
+      default:
+        _updateState(WidgetStates.errorState);
+    }
+  }
+
+  void _updateState(int newState) {
+    _state.currentState = newState;
+    notifyListeners();
+  }
+
   void reset() {
     _query = '';
     _movies = [];
-    _errorMessage = null;
     _isLoading = false;
+    _updateState(WidgetStates.successState);
     _debounce?.cancel();
     notifyListeners();
   }

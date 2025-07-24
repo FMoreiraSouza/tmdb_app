@@ -6,7 +6,7 @@ class GetPopularMoviesUsecase {
 
   GetPopularMoviesUsecase(this.repository);
 
-  Future<MovieResponseDto> call() async {
+  Future<MovieResponseDTO> call() async {
     return await repository.getPopularMovies();
   }
 }

@@ -1,8 +1,8 @@
 ﻿import 'package:tmdb_app/data/dto/response/movie_response_dto.dart';
-import 'package:tmdb_app/data/models/movie_model.dart';
+import 'package:tmdb_app/data/dto/response/movie_details_reponse_dto.dart';
 
 abstract class MovieRepository {
-  Future<MovieResponseDto> getPopularMovies();
-  Future<MovieResponseDto> searchMovies(String query);
-  Future<MovieModel> getMovieDetails(int movieId);
+  Future<MovieResponseDTO> getPopularMovies();
+  Future<MovieResponseDTO> searchMovies(String query);
+  Future<MovieDetailsResponseDTO> getMovieDetails(int movieId);
 }

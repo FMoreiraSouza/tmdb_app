@@ -7,6 +7,7 @@ class GetMovieDetailsUsecase {
   GetMovieDetailsUsecase(this._movieRepository);
 
   Future<MovieModel> call(int movieId) async {
-    return await _movieRepository.getMovieDetails(movieId);
+    final response = await _movieRepository.getMovieDetails(movieId);
+    return response.movie;
   }
 }

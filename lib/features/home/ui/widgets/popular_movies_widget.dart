@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
+import 'package:tmdb_app/core/enums/widget_states.dart';
+import 'package:tmdb_app/core/widgets/states/state_widget.dart';
 import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
 
 class PopularMoviesWidget extends StatefulWidget {
@@ -13,7 +15,11 @@ class PopularMoviesWidget extends StatefulWidget {
   State<PopularMoviesWidget> createState() => _PopularMoviesWidgetState();
 }
 
-class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
+class _PopularMoviesWidgetState extends State<PopularMoviesWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -36,112 +42,104 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Filmes Populares')),
       body: AnimatedBuilder(
         animation: widget.controller,
         builder: (context, _) {
-          if (widget.controller.isLoading) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SpinKitCircle(color: Colors.blue, size: 50.0),
-                  SizedBox(height: 16),
-                  Text(
-                    'Carregando filmes populares...',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (widget.controller.errorMessage != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 40),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.controller.errorMessage!,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => widget.controller.fetchPopularMovies(forceRefresh: true),
-                    child: const Text('Tentar novamente'),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (widget.controller.movies.isEmpty) {
-            return const Center(
-              child: Text(
-                'Nenhum filme encontrado.',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            );
-          }
-          return ListView.builder(
-            itemCount: widget.controller.movies.length,
-            itemBuilder: (context, index) {
-              final movie = widget.controller.movies[index];
-              return Card(
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: movie.posterPath != null
-                        ? CachedNetworkImage(
-                            imageUrl: '${ApiConstants.imageBaseUrl}${movie.posterPath}',
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                const Center(child: SpinKitCircle(color: Colors.blue, size: 30.0)),
-                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                          )
-                        : const Icon(Icons.movie, size: 50, color: Colors.white),
-                  ),
-                  title: Text(
-                    movie.title,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Row(
-                    children: [
-                      const Icon(Icons.access_time, color: Colors.grey, size: 12),
-                      const SizedBox(width: 4),
-                      Text(
-                        formatDuration(movie.runtime),
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  trailing: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2B64DF),
-                      borderRadius: BorderRadius.circular(10),
+          switch (widget.controller.state) {
+            case WidgetStates.loadingState:
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SpinKitCircle(color: Colors.blue, size: 50.0),
+                    SizedBox(height: 16),
+                    Text(
+                      'Carregando filmes populares...',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    child: Center(
-                      child: Text(
-                        (movie.voteAverage * 10).round().toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                  ],
+                ),
+              );
+            case WidgetStates.noConnection:
+              return StateWidget(
+                state: WidgetStates(currentState: WidgetStates.noConnection),
+
+                onRetry: () => widget.controller.fetchPopularMovies(forceRefresh: true),
+              );
+            case WidgetStates.emptyState:
+              return StateWidget(
+                state: WidgetStates(currentState: WidgetStates.emptyState),
+                message: 'Nenhum filme encontrado.',
+              );
+            case WidgetStates.successState:
+              return ListView.builder(
+                itemCount: widget.controller.movies.length,
+                itemBuilder: (context, index) {
+                  final movie = widget.controller.movies[index];
+                  return Card(
+                    child: ListTile(
+                      leading: SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: movie.posterPath != null
+                            ? CachedNetworkImage(
+                                imageUrl: '${ApiConstants.imageBaseUrl}${movie.posterPath}',
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: SpinKitCircle(color: Colors.blue, size: 30.0),
+                                ),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                              )
+                            : const Icon(Icons.movie, size: 50, color: Colors.white),
+                      ),
+                      title: Text(
+                        movie.title,
+                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Row(
+                        children: [
+                          const Icon(Icons.access_time, color: Colors.grey, size: 12),
+                          const SizedBox(width: 4),
+                          Text(
+                            formatDuration(movie.runtime),
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      trailing: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2B64DF),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            (movie.voteAverage * 10).round().toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
-          );
+            default:
+              return StateWidget(
+                state: WidgetStates(currentState: WidgetStates.errorState),
+                message: 'Erro ao carregar filmes',
+                onRetry: () => widget.controller.fetchPopularMovies(forceRefresh: true),
+              );
+          }
         },
       ),
     );

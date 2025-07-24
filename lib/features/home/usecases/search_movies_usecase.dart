@@ -6,7 +6,7 @@ class SearchMoviesUsecase {
 
   SearchMoviesUsecase(this.repository);
 
-  Future<MovieResponseDto> call(String query) async {
+  Future<MovieResponseDTO> call(String query) async {
     return await repository.searchMovies(query);
   }
 }

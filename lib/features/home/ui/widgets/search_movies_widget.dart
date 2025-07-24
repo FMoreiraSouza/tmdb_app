@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tmdb_app/core/constants/api_constants.dart';
+import 'package:tmdb_app/core/enums/widget_states.dart';
+import 'package:tmdb_app/core/widgets/states/state_widget.dart';
 import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
 
 class SearchMoviesWidget extends StatefulWidget {
@@ -73,89 +75,92 @@ class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
               child: AnimatedBuilder(
                 animation: widget.controller,
                 builder: (context, _) {
-                  if (widget.controller.isLoading) {
-                    return const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SpinKitCircle(color: Colors.blue, size: 50.0),
-                          SizedBox(height: 16),
-                          Text(
-                            'Buscando filmes...',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  if (widget.controller.errorMessage != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.error_outline, color: Colors.red, size: 40),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.controller.errorMessage!,
-                            style: const TextStyle(color: Colors.red, fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => widget.controller.setQuery(_searchController.text),
-                            child: const Text('Tentar novamente'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  if (widget.controller.movies.isEmpty && _searchController.text.isNotEmpty) {
-                    return const Center(
-                      child: Text(
-                        'Nenhum filme encontrado para esta busca.',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: widget.controller.movies.length,
-                    itemBuilder: (context, index) {
-                      final movie = widget.controller.movies[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
+                  switch (widget.controller.state) {
+                    case WidgetStates.loadingState:
+                      return const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              width: 60,
-                              height: 90,
-                              child: movie.posterPath != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: '${ApiConstants.imageBaseUrl}${movie.posterPath}',
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => const Center(
-                                        child: SpinKitCircle(color: Colors.blue, size: 30.0),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error, color: Colors.white, size: 40),
-                                    )
-                                  : const Icon(Icons.movie, size: 60, color: Colors.white),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Expanded(
-                              child: Text(
-                                movie.title,
-                                style: const TextStyle(color: Colors.white, fontSize: 16),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            SpinKitCircle(color: Colors.blue, size: 50.0),
+                            SizedBox(height: 16),
+                            Text(
+                              'Buscando filmes...',
+                              style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           ],
                         ),
                       );
-                    },
-                  );
+                    case WidgetStates.noConnection:
+                      return StateWidget(
+                        state: WidgetStates(currentState: WidgetStates.noConnection),
+                        onRetry: () => widget.controller.setQuery(_searchController.text),
+                      );
+                    case WidgetStates.emptyState:
+                      return StateWidget(
+                        state: WidgetStates(currentState: WidgetStates.emptyState),
+                        message: 'Nenhum filme encontrado para esta busca.',
+                      );
+                    case WidgetStates.successState:
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: widget.controller.movies.length,
+                        itemBuilder: (context, index) {
+                          final movie = widget.controller.movies[index];
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 60,
+                                      height: 60,
+                                      child: movie.posterPath != null
+                                          ? CachedNetworkImage(
+                                              imageUrl:
+                                                  '${ApiConstants.imageBaseUrl}${movie.posterPath}',
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) => const Center(
+                                                child: SpinKitCircle(
+                                                  color: Colors.blue,
+                                                  size: 30.0,
+                                                ),
+                                              ),
+                                              errorWidget: (context, url, error) => const Icon(
+                                                Icons.error,
+                                                color: Colors.white,
+                                                size: 40,
+                                              ),
+                                            )
+                                          : const Icon(Icons.movie, size: 60, color: Colors.white),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Text(
+                                        movie.title,
+                                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                child: const Divider(color: Colors.grey, height: 2, thickness: 0.2),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    default:
+                      return StateWidget(
+                        state: WidgetStates(currentState: WidgetStates.errorState),
+                        message: 'Erro ao buscar filmes',
+                        onRetry: () => widget.controller.setQuery(_searchController.text),
+                      );
+                  }
                 },
               ),
             ),
