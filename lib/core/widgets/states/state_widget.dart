@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/enums/widget_states.dart';
 import 'package:tmdb_app/core/utils/reponsivity_utils.dart';
+import 'package:tmdb_app/core/constants/app_constants.dart';
 
 class StateWidget extends StatelessWidget {
   final WidgetStates state;
@@ -30,18 +31,18 @@ class StateWidget extends StatelessWidget {
       case WidgetStates.noConnection:
         defaultMessage = 'Sem conexão com a internet';
         defaultIcon = Icons.signal_wifi_off;
-        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
+        defaultIconColor = AppConstants.getDefaultIconColor(context);
         break;
       case WidgetStates.emptyState:
         defaultMessage = 'Nenhum filme encontrado';
         defaultIcon = Icons.search_off;
-        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
+        defaultIconColor = AppConstants.getDefaultIconColor(context);
         break;
       case WidgetStates.errorState:
       default:
         defaultMessage = 'Erro ao carregar dados';
         defaultIcon = Icons.error_outline;
-        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
+        defaultIconColor = AppConstants.getDefaultIconColor(context);
         break;
     }
 
@@ -52,33 +53,42 @@ class StateWidget extends StatelessWidget {
           Icon(
             icon ?? defaultIcon,
             color: iconColor ?? defaultIconColor,
-            size: orientation.responsiveSize(0.1, 40),
+            size: orientation.responsiveSize(
+              AppConstants.iconSizePercentage,
+              AppConstants.iconSizeBase,
+            ),
           ),
-          SizedBox(height: orientation.shortestSide * 0.02),
+          SizedBox(height: orientation.shortestSide * AppConstants.defaultSpacingPercentage),
           Text(
             message ?? defaultMessage,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(fontSize: orientation.responsiveSize(0.04, 16)),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: orientation.responsiveSize(
+                AppConstants.textSizePercentage,
+                AppConstants.textSizeBase,
+              ),
+            ),
             textAlign: TextAlign.center,
           ),
           if (onRetry != null) ...[
-            SizedBox(height: orientation.shortestSide * 0.04),
+            SizedBox(height: orientation.shortestSide * AppConstants.defaultSpacingPercentage * 2),
             ElevatedButton(
               onPressed: onRetry,
               style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                 padding: WidgetStateProperty.all(
                   orientation.responsivePadding(
-                    horizontalPercentage: 0.04,
-                    verticalPercentage: 0.02,
+                    horizontalPercentage: AppConstants.searchHorizontalPaddingPercentage,
+                    verticalPercentage: AppConstants.searchVerticalPaddingPercentage,
                   ),
                 ),
               ),
               child: Text(
                 'Tentar novamente',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(fontSize: orientation.responsiveSize(0.04, 16)),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: orientation.responsiveSize(
+                    AppConstants.textSizePercentage,
+                    AppConstants.textSizeBase,
+                  ),
+                ),
               ),
             ),
           ],

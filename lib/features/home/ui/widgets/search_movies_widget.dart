@@ -1,11 +1,9 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:tmdb_app/core/constants/api_constants.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/enums/widget_states.dart';
-import 'package:tmdb_app/core/widgets/states/state_widget.dart';
 import 'package:tmdb_app/core/utils/reponsivity_utils.dart';
 import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
+import 'package:tmdb_app/core/constants/app_constants.dart';
+import 'package:tmdb_app/features/home/ui/widgets/movie_list_widget.dart';
 
 class SearchMoviesWidget extends StatefulWidget {
   final SearchMoviesController controller;
@@ -49,49 +47,60 @@ class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
   @override
   Widget build(BuildContext context) {
     final orientation = ResponsivityUtils(context);
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(title: const Text('Busca'), automaticallyImplyLeading: false),
         body: SafeArea(
           child: Column(
             children: [
               Padding(
                 padding: orientation.responsivePadding(
-                  horizontalPercentage: 0.04,
-                  verticalPercentage: 0.02,
+                  horizontalPercentage: AppConstants.searchHorizontalPaddingPercentage,
+                  verticalPercentage: AppConstants.searchVerticalPaddingPercentage,
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardTheme.color, // Usa cardTheme.color
-                    borderRadius: orientation.responsiveBorderRadius(0.08),
+                    color: AppConstants.getDefaultCardColor(context),
+                    borderRadius: orientation.responsiveBorderRadius(
+                      AppConstants.searchBorderRadiusPercentage,
+                    ),
                   ),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Buscar filmes',
                       hintStyle: Theme.of(context).inputDecorationTheme.hintStyle?.copyWith(
-                        fontSize: orientation.responsiveSize(0.04, 16),
+                        fontSize: orientation.responsiveSize(
+                          AppConstants.textSizePercentage,
+                          AppConstants.textSizeBase,
+                        ),
                       ),
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
                       prefixIcon: Icon(
                         Icons.search,
-                        color: Theme.of(
-                          context,
-                        ).appBarTheme.iconTheme?.color, // Usa iconTheme.color
-                        size: orientation.responsiveSize(0.06, 24),
+                        color: AppConstants.getDefaultAppBarIconColor(context),
+                        size: orientation.responsiveSize(
+                          AppConstants.searchIconSizePercentage,
+                          AppConstants.searchIconSizeBase,
+                        ),
                       ),
                       contentPadding: orientation.responsivePadding(
-                        horizontalPercentage: 0.04,
-                        verticalPercentage: 0.03,
+                        horizontalPercentage: AppConstants.searchHorizontalPaddingPercentage,
+                        verticalPercentage: AppConstants.searchVerticalPaddingPercentage,
                       ),
                     ),
                     textInputAction: TextInputAction.search,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(fontSize: orientation.responsiveSize(0.04, 16)),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: orientation.responsiveSize(
+                        AppConstants.textSizePercentage,
+                        AppConstants.textSizeBase,
+                      ),
+                    ),
                     onSubmitted: (_) {
                       FocusScope.of(context).unfocus();
                     },
@@ -102,134 +111,29 @@ class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   child: SizedBox(
-                    height: orientation.screenHeight,
+                    height:
+                        orientation.screenHeight -
+                        kToolbarHeight -
+                        MediaQuery.of(context).padding.top -
+                        orientation
+                            .responsivePadding(
+                              verticalPercentage: AppConstants.searchVerticalPaddingPercentage,
+                            )
+                            .vertical,
                     child: AnimatedBuilder(
                       animation: widget.controller,
                       builder: (context, _) {
-                        switch (widget.controller.state) {
-                          case WidgetStates.loadingState:
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SpinKitCircle(
-                                    color: Theme.of(
-                                      context,
-                                    ).elevatedButtonTheme.style!.backgroundColor!.resolve({}),
-                                    size: orientation.responsiveSize(0.1, 50),
-                                  ),
-                                  SizedBox(height: orientation.shortestSide * 0.03),
-                                  Text(
-                                    'Buscando filmes',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: orientation.responsiveSize(0.04, 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          case WidgetStates.noConnection:
-                            return Center(
-                              child: StateWidget(
-                                state: WidgetStates(currentState: WidgetStates.noConnection),
-                                onRetry: () => widget.controller.setQuery(_searchController.text),
-                              ),
-                            );
-                          case WidgetStates.emptyState:
-                            return Center(
-                              child: StateWidget(
-                                state: WidgetStates(currentState: WidgetStates.emptyState),
-                                message: 'Nenhum filme encontrado para esta busca.',
-                              ),
-                            );
-                          case WidgetStates.successState:
-                            return ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              padding: orientation.responsivePadding(horizontalPercentage: 0.03),
-                              itemCount: widget.controller.movies.length,
-                              itemBuilder: (context, index) {
-                                final movie = widget.controller.movies[index];
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: orientation.responsivePadding(
-                                        verticalPercentage: 0.01,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: orientation.responsiveSize(0.12, 60),
-                                            height: orientation.responsiveSize(0.12, 60),
-                                            child: movie.posterPath != null
-                                                ? CachedNetworkImage(
-                                                    imageUrl:
-                                                        '${ApiConstants.imageBaseUrl}${movie.posterPath}',
-                                                    fit: BoxFit.cover,
-                                                    placeholder: (context, url) => Center(
-                                                      child: SpinKitCircle(
-                                                        color: Theme.of(context)
-                                                            .elevatedButtonTheme
-                                                            .style!
-                                                            .backgroundColor!
-                                                            .resolve({}),
-                                                        size: orientation.responsiveSize(0.08, 30),
-                                                      ),
-                                                    ),
-                                                    errorWidget: (context, url, error) => Icon(
-                                                      Icons.error,
-                                                      color: Theme.of(
-                                                        context,
-                                                      ).appBarTheme.iconTheme?.color,
-                                                      size: orientation.responsiveSize(0.1, 40),
-                                                    ),
-                                                  )
-                                                : Icon(
-                                                    Icons.movie,
-                                                    size: orientation.responsiveSize(0.12, 60),
-                                                    color: Theme.of(
-                                                      context,
-                                                    ).appBarTheme.iconTheme?.color,
-                                                  ),
-                                          ),
-                                          SizedBox(width: orientation.shortestSide * 0.02),
-                                          Expanded(
-                                            child: Text(
-                                              movie.title,
-                                              style: Theme.of(context).textTheme.bodyLarge
-                                                  ?.copyWith(
-                                                    fontSize: orientation.responsiveSize(0.04, 16),
-                                                  ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: orientation.responsivePadding(
-                                        verticalPercentage: 0.01,
-                                      ),
-                                      child: Divider(
-                                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                                        height: orientation.shortestSide * 0.005,
-                                        thickness: 0.2,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          default:
-                            return Center(
-                              child: StateWidget(
-                                state: WidgetStates(currentState: WidgetStates.errorState),
-                                message: 'Erro ao buscar filmes',
-                                onRetry: () => widget.controller.setQuery(_searchController.text),
-                              ),
-                            );
-                        }
+                        return MovieListWidget(
+                          movies: widget.controller.movies,
+                          state: WidgetStates(currentState: widget.controller.state),
+                          loadingMessage: 'Buscando filmes',
+                          emptyMessage: 'Nenhum filme encontrado para esta busca.',
+                          errorMessage: 'Erro ao buscar filmes',
+                          onRetry: () => widget.controller.setQuery(_searchController.text),
+                          showDivider: true,
+                          verticalPadding: AppConstants.verticalPaddingPercentage,
+                          horizontalPadding: AppConstants.horizontalPaddingPercentage,
+                        );
                       },
                     ),
                   ),
