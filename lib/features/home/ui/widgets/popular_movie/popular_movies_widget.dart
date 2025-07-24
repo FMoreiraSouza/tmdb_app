@@ -43,6 +43,7 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget>
               onRetry: () => widget.controller.fetchPopularMovies(forceRefresh: true),
               showDuration: true,
               showRating: true,
+              isPopularMovies: true,
             );
           },
         ),

@@ -21,7 +21,7 @@ class StateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = ResponsivityUtils(context);
+    final responsivity = ResponsivityUtils(context);
 
     String defaultMessage;
     IconData defaultIcon;
@@ -53,16 +53,16 @@ class StateWidget extends StatelessWidget {
           Icon(
             icon ?? defaultIcon,
             color: iconColor ?? defaultIconColor,
-            size: orientation.responsiveSize(
+            size: responsivity.responsiveSize(
               AppConstants.iconSizePercentage,
               AppConstants.iconSizeBase,
             ),
           ),
-          SizedBox(height: orientation.shortestSide * AppConstants.defaultSpacingPercentage),
+          SizedBox(height: responsivity.defaultSpacing()),
           Text(
             message ?? defaultMessage,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: orientation.responsiveSize(
+              fontSize: responsivity.responsiveSize(
                 AppConstants.textSizePercentage,
                 AppConstants.textSizeBase,
               ),
@@ -70,12 +70,12 @@ class StateWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           if (onRetry != null) ...[
-            SizedBox(height: orientation.shortestSide * AppConstants.defaultSpacingPercentage * 2),
+            SizedBox(height: responsivity.defaultSpacing(multiplier: 2.0)),
             ElevatedButton(
               onPressed: onRetry,
               style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                 padding: WidgetStateProperty.all(
-                  orientation.responsivePadding(
+                  responsivity.responsivePadding(
                     horizontalPercentage: AppConstants.searchHorizontalPaddingPercentage,
                     verticalPercentage: AppConstants.searchVerticalPaddingPercentage,
                   ),
@@ -84,7 +84,7 @@ class StateWidget extends StatelessWidget {
               child: Text(
                 'Tentar novamente',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: orientation.responsiveSize(
+                  fontSize: responsivity.responsiveSize(
                     AppConstants.textSizePercentage,
                     AppConstants.textSizeBase,
                   ),
