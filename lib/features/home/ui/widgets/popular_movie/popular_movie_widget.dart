@@ -3,16 +3,16 @@ import 'package:tmdb_app/core/enums/widget_states.dart';
 import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
 import 'package:tmdb_app/features/home/ui/widgets/movie_list_widget.dart';
 
-class PopularMoviesWidget extends StatefulWidget {
+class PopularMovieWidget extends StatefulWidget {
   final PopularMoviesController controller;
 
-  const PopularMoviesWidget({super.key, required this.controller});
+  const PopularMovieWidget({super.key, required this.controller});
 
   @override
-  State<PopularMoviesWidget> createState() => _PopularMoviesWidgetState();
+  State<PopularMovieWidget> createState() => _PopularMovieWidgetState();
 }
 
-class _PopularMoviesWidgetState extends State<PopularMoviesWidget>
+class _PopularMovieWidgetState extends State<PopularMovieWidget>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;

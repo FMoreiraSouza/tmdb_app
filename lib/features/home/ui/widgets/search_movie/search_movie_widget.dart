@@ -5,16 +5,16 @@ import 'package:tmdb_app/core/constants/app_constants.dart';
 import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
 import 'package:tmdb_app/features/home/ui/widgets/movie_list_widget.dart';
 
-class SearchMoviesWidget extends StatefulWidget {
+class SearchMovieWidget extends StatefulWidget {
   final SearchMoviesController controller;
 
-  const SearchMoviesWidget({super.key, required this.controller});
+  const SearchMovieWidget({super.key, required this.controller});
 
   @override
-  State<SearchMoviesWidget> createState() => _SearchMoviesWidgetState();
+  State<SearchMovieWidget> createState() => _SearchMovieWidgetState();
 }
 
-class _SearchMoviesWidgetState extends State<SearchMoviesWidget> {
+class _SearchMovieWidgetState extends State<SearchMovieWidget> {
   final _searchController = TextEditingController();
 
   @override

@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/di/app_di.dart';
 import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/features/home/ui/widgets/popular_movie/popular_movies_widget.dart';
+import 'package:tmdb_app/features/home/ui/widgets/popular_movie/popular_movie_widget.dart';
 import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
-import 'package:tmdb_app/features/home/ui/widgets/search_movie/search_movies_widget.dart';
+import 'package:tmdb_app/features/home/ui/widgets/search_movie/search_movie_widget.dart';
 import 'package:tmdb_app/core/utils/reponsivity_utils.dart';
 import 'package:tmdb_app/core/constants/app_constants.dart';
 
@@ -18,11 +18,11 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    PopularMoviesWidget(
+    PopularMovieWidget(
       key: const Key('popular_movies'),
       controller: AppDI.instance.get<PopularMoviesController>(),
     ),
-    SearchMoviesWidget(
+    SearchMovieWidget(
       key: const Key('search_movies'),
       controller: AppDI.instance.get<SearchMoviesController>(),
     ),
