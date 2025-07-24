@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/enums/widget_states.dart';
+import 'package:tmdb_app/core/utils/reponsivity_utils.dart';
 
 class StateWidget extends StatelessWidget {
   final WidgetStates state;
@@ -19,6 +20,8 @@ class StateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final orientation = ResponsivityUtils(context);
+
     String defaultMessage;
     IconData defaultIcon;
     Color defaultIconColor;
@@ -27,18 +30,18 @@ class StateWidget extends StatelessWidget {
       case WidgetStates.noConnection:
         defaultMessage = 'Sem conexão com a internet';
         defaultIcon = Icons.signal_wifi_off;
-        defaultIconColor = Colors.red;
+        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
         break;
       case WidgetStates.emptyState:
         defaultMessage = 'Nenhum filme encontrado';
         defaultIcon = Icons.search_off;
-        defaultIconColor = Colors.grey;
+        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
         break;
       case WidgetStates.errorState:
       default:
         defaultMessage = 'Erro ao carregar dados';
         defaultIcon = Icons.error_outline;
-        defaultIconColor = Colors.red;
+        defaultIconColor = Theme.of(context).textTheme.bodyMedium!.color!; // Usa bodyMedium.color
         break;
     }
 
@@ -46,23 +49,37 @@ class StateWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon ?? defaultIcon, color: iconColor ?? defaultIconColor, size: 40),
-          const SizedBox(height: 8),
+          Icon(
+            icon ?? defaultIcon,
+            color: iconColor ?? defaultIconColor,
+            size: orientation.responsiveSize(0.1, 40),
+          ),
+          SizedBox(height: orientation.shortestSide * 0.02),
           Text(
             message ?? defaultMessage,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontSize: orientation.responsiveSize(0.04, 16)),
             textAlign: TextAlign.center,
           ),
           if (onRetry != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: orientation.shortestSide * 0.04),
             ElevatedButton(
               onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFF2B64DF),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+                padding: WidgetStateProperty.all(
+                  orientation.responsivePadding(
+                    horizontalPercentage: 0.04,
+                    verticalPercentage: 0.02,
+                  ),
+                ),
               ),
-              child: const Text('Tentar novamente'),
+              child: Text(
+                'Tentar novamente',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontSize: orientation.responsiveSize(0.04, 16)),
+              ),
             ),
           ],
         ],

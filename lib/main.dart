@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:tmdb_app/core/di/app_di.dart';
 import 'package:tmdb_app/core/di/dio_di_manager.dart';
 import 'package:tmdb_app/core/theme/app_theme.dart';
@@ -12,11 +11,6 @@ void main() async {
   DioDIManager.registerApi();
 
   AppDI.init();
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
 
   runApp(const TMDBApp());
 }
