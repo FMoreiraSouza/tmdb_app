@@ -115,14 +115,14 @@ Essa abordagem garante que o app seja visualmente consistente e funcional em dis
 
 ---
 
-## 🎨 Telas do Aplicativo
+### 🎨 Telas do Aplicativo
 
-### Home Page
+#### Home Page
 - Barra de navegação inferior com ícones (`home.png` e `search.png`) para alternar seções, redimensionados para diferentes resoluções.
 - Usa `Stack` para posicionar a barra sobre o conteúdo, com botões animados (`AnimatedContainer`).
 - Transições suaves com `AnimatedSwitcher` e `FadeTransition`.
 
-### Filmes Populares
+#### Filmes Populares
 - Lista de filmes em `ListView.builder` com cartões estilizados (`Card`), adaptados para diferentes tamanhos de tela.
 - Cada cartão exibe:
   - Pôster via `CachedNetworkImage`, escalado com `responsiveSize`.
@@ -131,24 +131,24 @@ Essa abordagem garante que o app seja visualmente consistente e funcional em dis
   - Nota média em círculo azul, com tamanho responsivo.
 - Estados: carregando (`SpinKitCircle`), erro/sem conexão (com retry), vazio.
 - **Imagens**:
-  | Tablet (Landscape) | Tablet (Portrait) |
-  |--------------------|-------------------|
-  | ![Tablet Popular Movies](views/landscape/tablet_popular_movies.png) | ![Tablet Popular Movies](views/portrait/tablet_popular_movies.png) |
-  | Smartphone (Landscape) | Smartphone (Portrait) |
+  | **Smartphone (Landscape)** | **Smartphone (Portrait)** |
+  |----------------------------|---------------------------|
   | ![Smartphone Popular Movies](views/landscape/smartphone_popular_movies.png) | ![Smartphone Popular Movies](views/portrait/smartphone_popular_movies.png) |
+  | **Tablet (Landscape)** | **Tablet (Portrait)** |
+  | ![Tablet Popular Movies](views/landscape/tablet_popular_movies.png) | ![Tablet Popular Movies](views/portrait/tablet_popular_movies.png) |
 
-### Busca
+#### Busca
 - Campo de texto com ícone de lupa e borda arredondada, ajustados para a resolução do dispositivo.
 - Busca com debounce (500ms).
 - Resultados em `ListView` com divisores responsivos.
 - Suporta estados de interface semelhantes à tela de filmes populares.
 - Teclado ocultado ao tocar fora do campo.
 - **Imagens**:
-  | Tablet (Landscape) | Tablet (Portrait) |
-  |--------------------|-------------------|
-  | ![Tablet Search Movies](views/landscape/tablet_search_movies.png) | ![Tablet Search Movies](views/portrait/tablet_search_movies.png) |
-  | Smartphone (Landscape) | Smartphone (Portrait) |
+  | **Smartphone (Landscape)** | **Smartphone (Portrait)** |
+  |----------------------------|---------------------------|
   | ![Smartphone Search Movies](views/landscape/smartphone_search_movies.png) | ![Smartphone Search Movies](views/portrait/smartphone_search_movies.png) |
+  | **Tablet (Landscape)** | **Tablet (Portrait)** |
+  | ![Tablet Search Movies](views/landscape/tablet_search_movies.png) | ![Tablet Search Movies](views/portrait/tablet_search_movies.png) |
 
 ---
 
