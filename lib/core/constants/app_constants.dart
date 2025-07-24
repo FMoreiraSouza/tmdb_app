@@ -24,10 +24,12 @@ class AppConstants {
   static const double ratingContainerSizePercentage = 0.1;
   static const double ratingContainerSizeBase = 40.0;
 
-  static const double horizontalPaddingPercentage = 0.01;
-  static const double verticalPaddingPercentage = 0.02;
+  static const double horizontalPaddingPercentage = 0.03;
+  static const double verticalPaddingPercentage = 0.01;
   static const double searchHorizontalPaddingPercentage = 0.04;
   static const double searchVerticalPaddingPercentage = 0.04;
+  static const double searchBarHeightPercentage = 0.08;
+  static const double searchBarHeightBase = 48.0;
   static const double cardVerticalPaddingPercentage = 0.015;
   static const double dividerVerticalPaddingPercentage = 0.01;
   static const double switchButtonPaddingPercentage = 0.015;

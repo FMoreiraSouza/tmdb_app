@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:tmdb_app/core/di/app_di.dart';
 import 'package:tmdb_app/features/home/controllers/popular_movies_controller.dart';
-import 'package:tmdb_app/features/home/ui/widgets/popular_movies_widget.dart';
+import 'package:tmdb_app/features/home/ui/widgets/popular_movie/popular_movie_widget.dart';
 import 'package:tmdb_app/features/home/controllers/search_movies_controller.dart';
-import 'package:tmdb_app/features/home/ui/widgets/search_movies_widget.dart';
+import 'package:tmdb_app/features/home/ui/widgets/search_movie/search_movie_widget.dart';
 import 'package:tmdb_app/core/utils/reponsivity_utils.dart';
 import 'package:tmdb_app/core/constants/app_constants.dart';
 
@@ -18,11 +18,11 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    PopularMoviesWidget(
+    PopularMovieWidget(
       key: const Key('popular_movies'),
       controller: AppDI.instance.get<PopularMoviesController>(),
     ),
-    SearchMoviesWidget(
+    SearchMovieWidget(
       key: const Key('search_movies'),
       controller: AppDI.instance.get<SearchMoviesController>(),
     ),
@@ -30,13 +30,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = ResponsivityUtils(context);
+    final responsivity = ResponsivityUtils(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: orientation.responsivePadding(
+          padding: responsivity.responsivePadding(
             verticalPercentage: AppConstants.verticalPaddingPercentage,
           ),
           child: Stack(
@@ -51,20 +51,20 @@ class _HomePageState extends State<HomePage> {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: orientation.shortestSide * AppConstants.bottomNavigationSpacingPercentage,
+                bottom: responsivity.shortestSide * AppConstants.bottomNavigationSpacingPercentage,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      margin: orientation.responsiveMargin(
+                      margin: responsivity.responsiveMargin(
                         horizontalPercentage: AppConstants.horizontalMarginPercentage,
                       ),
                       padding: EdgeInsets.all(
-                        orientation.shortestSide * AppConstants.switchButtonPaddingPercentage,
+                        responsivity.shortestSide * AppConstants.switchButtonPaddingPercentage,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: orientation.responsiveBorderRadius(
+                        borderRadius: responsivity.responsiveBorderRadius(
                           AppConstants.borderRadiusPercentage,
                         ),
                       ),
@@ -79,10 +79,11 @@ class _HomePageState extends State<HomePage> {
                                 _currentIndex = 0;
                               });
                             },
-                            orientation: orientation,
+                            responsivity: responsivity,
                           ),
                           SizedBox(
-                            width: orientation.shortestSide * AppConstants.defaultSpacingPercentage,
+                            width:
+                                responsivity.shortestSide * AppConstants.defaultSpacingPercentage,
                           ),
                           _buildSwitchButton(
                             path: 'assets/icons/search.png',
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                                 _currentIndex = 1;
                               });
                             },
-                            orientation: orientation,
+                            responsivity: responsivity,
                           ),
                         ],
                       ),
@@ -111,23 +112,23 @@ class _HomePageState extends State<HomePage> {
     required String path,
     required bool isActive,
     required VoidCallback onTap,
-    required ResponsivityUtils orientation,
+    required ResponsivityUtils responsivity,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: AppConstants.buttonAnimationDuration,
         curve: AppConstants.buttonAnimationCurve,
-        width: orientation.responsiveSize(
+        width: responsivity.responsiveSize(
           AppConstants.switchButtonWidthPercentage,
           AppConstants.switchButtonWidthBase,
         ),
-        height: orientation.responsiveSize(
+        height: responsivity.responsiveSize(
           AppConstants.switchButtonHeightPercentage,
           AppConstants.switchButtonHeightBase,
         ),
         padding: EdgeInsets.all(
-          orientation.shortestSide * AppConstants.switchButtonPaddingPercentage,
+          responsivity.shortestSide * AppConstants.switchButtonPaddingPercentage,
         ),
         decoration: BoxDecoration(
           color: isActive ? AppConstants.getDefaultButtonColor(context) : Colors.transparent,
@@ -136,11 +137,11 @@ class _HomePageState extends State<HomePage> {
         child: Image.asset(
           path,
           color: AppConstants.getDefaultAppBarIconColor(context),
-          height: orientation.responsiveSize(
+          height: responsivity.responsiveSize(
             AppConstants.switchButtonImageSizePercentage,
             AppConstants.switchButtonImageSizeBase,
           ),
-          width: orientation.responsiveSize(
+          width: responsivity.responsiveSize(
             AppConstants.switchButtonImageSizePercentage,
             AppConstants.switchButtonImageSizeBase,
           ),

@@ -12,7 +12,7 @@ class StateHandlerWidget extends StatelessWidget {
   final String errorMessage;
   final VoidCallback? onRetry;
   final Widget successWidget;
-  final ResponsivityUtils orientation;
+  final ResponsivityUtils responsivity;
 
   const StateHandlerWidget({
     super.key,
@@ -22,7 +22,7 @@ class StateHandlerWidget extends StatelessWidget {
     required this.errorMessage,
     this.onRetry,
     required this.successWidget,
-    required this.orientation,
+    required this.responsivity,
   });
 
   @override
@@ -35,18 +35,16 @@ class StateHandlerWidget extends StatelessWidget {
             children: [
               SpinKitCircle(
                 color: AppConstants.getDefaultButtonColor(context),
-                size: orientation.responsiveSize(
+                size: responsivity.responsiveSize(
                   AppConstants.iconSizePercentage,
                   AppConstants.iconSizeBase,
                 ),
               ),
-              SizedBox(
-                height: orientation.shortestSide * AppConstants.loadingTextSpacingPercentage,
-              ),
+              SizedBox(height: responsivity.loadingTextSpacing()),
               Text(
                 loadingMessage,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: orientation.responsiveSize(
+                  fontSize: responsivity.responsiveSize(
                     AppConstants.textSizePercentage,
                     AppConstants.textSizeBase,
                   ),
