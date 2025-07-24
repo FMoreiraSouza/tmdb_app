@@ -5,150 +5,165 @@
 
 ## 📃 Descrição
 
-O **TMDB App** é um aplicativo mobile desenvolvido em **Flutter** que utiliza a API do **The Movie Database (TMDB)** para oferecer uma experiência interativa de exploração e busca de filmes. O aplicativo permite aos usuários visualizar uma lista de filmes populares com detalhes como título, duração, nota média e pôster, além de oferecer uma funcionalidade de busca por filmes com base em palavras-chave. Com um design moderno, transições suaves e feedback visual claro, o app prioriza a experiência do usuário, garantindo robustez e escalabilidade por meio de uma arquitetura modular, injeção de dependências e tratamento de erros abrangente.
+O **TMDB App** é um aplicativo mobile desenvolvido em **Flutter** que consome a API do **The Movie Database (TMDB)** para proporcionar uma experiência interativa de exploração e busca de filmes. O app permite visualizar filmes populares com detalhes como título, pôster, duração e nota média, além de oferecer uma funcionalidade de busca por palavras-chave. Com uma interface moderna, transições suaves e design responsivo, o aplicativo garante uma experiência de usuário fluida e consistente em dispositivos com diferentes resoluções e orientações (smartphones, tablets, portrait e landscape).
 
-O projeto foi estruturado seguindo boas práticas de desenvolvimento, com separação clara entre camadas de apresentação, lógica de negócio e acesso a dados. Ele é ideal para desenvolvedores que desejam estudar uma implementação prática de Flutter com integração de APIs externas, gerenciamento de estado reativo e otimização de performance.
+O projeto segue uma arquitetura modular com separação clara entre apresentação, lógica de negócio e acesso a dados, utilizando injeção de dependências e práticas modernas de desenvolvimento Flutter. A responsividade é priorizada por meio da classe `ResponsivityUtils`, que adapta elementos visuais dinamicamente com base no tamanho da tela, garantindo portabilidade e usabilidade em dispositivos de baixa, média e alta resolução. É ideal para desenvolvedores que desejam estudar uma implementação prática de Flutter com integração de APIs, gerenciamento de estado reativo, responsividade e otimização de performance.
 
 ---
 
 ## 💻 Tecnologias Utilizadas
 
-- **Flutter**: Framework para construção de interfaces de usuário multiplataforma, garantindo consistência visual em Android e iOS.
-- **Dart**: Linguagem de programação utilizada para lógica e interface do aplicativo.
-- **Dio**: Cliente HTTP para chamadas à API do TMDB, com suporte a interceptadores para logging e tratamento de erros.
-- **CachedNetworkImage**: Carregamento eficiente de imagens com cache para reduzir uso de rede e melhorar performance.
-- **Flutter SpinKit**: Animações de carregamento para feedback visual durante requisições.
-- **ChangeNotifier**: Gerenciamento de estado reativo para atualizar a interface com base em mudanças nos dados.
-- **Dependency Injection (DI)**: Estrutura modular para injeção de dependências, facilitando manutenção e testes.
-- **TMDB API**: API pública para obtenção de dados de filmes, incluindo listas de filmes populares, detalhes e resultados de busca.
+- **Flutter**: Framework para interfaces multiplataforma, garantindo consistência visual em Android e iOS.
+- **Dart**: Linguagem de programação para lógica e interface.
+- **Dio**: Cliente HTTP para chamadas à API do TMDB, com suporte a interceptadores.
+- **CachedNetworkImage**: Carregamento eficiente de imagens com cache.
+- **Flutter SpinKit**: Animações de carregamento para feedback visual.
+- **ChangeNotifier**: Gerenciamento de estado reativo.
+- **Dependency Injection (DI)**: Estrutura modular para facilitar manutenção e testes.
+- **TMDB API**: API pública para obtenção de dados de filmes.
 
 ---
 
 ## 🛎️ Funcionalidades
 
-O **TMDB App** oferece as seguintes funcionalidades:
-
 ### ✅ Exploração de Filmes Populares
 - Exibe uma lista de filmes populares obtida do endpoint `movie/popular` da API do TMDB.
 - Cada filme é apresentado em um cartão com:
-  - **Pôster**: Carregado via `CachedNetworkImage` com placeholder de carregamento e ícone de erro.
-  - **Título**: Limitado a duas linhas com elipse para títulos longos.
-  - **Duração**: Formatada como "XhYm" (ex.: 2h15m), obtida do endpoint de detalhes do filme.
+  - **Pôster**: Carregado via `CachedNetworkImage` com placeholder e ícone de erro, escalado para diferentes resoluções.
+  - **Título**: Limitado a duas linhas com elipse.
+  - **Duração**: Formatada como "XhYm" (ex.: 2h15m).
   - **Nota Média**: Exibida em um círculo estilizado, calculada como a média de votos multiplicada por 10 e arredondada.
-- Suporta estados de interface como carregamento, erro, sem conexão e lista vazia, com opções de retry para falhas.
+- Suporta estados de interface: carregamento, erro, sem conexão e lista vazia, com opção de retry.
 
 ### ✅ Busca de Filmes
-- Permite buscar filmes por título ou palavras-chave usando o endpoint `search/movie`.
-- Implementa debounce (500ms) para evitar chamadas excessivas à API durante a digitação.
-- Exibe resultados em uma lista com pôster e título, com suporte a estados de carregamento, erro e lista vazia.
+- Busca filmes por título ou palavras-chave usando o endpoint `search/movie`.
+- Implementa debounce (500ms) para otimizar requisições.
+- Exibe resultados em uma lista com pôster, título e divisores, adaptada para diferentes tamanhos de tela.
 - O teclado é ocultado ao tocar fora do campo de busca, melhorando a usabilidade.
 
 ### ✅ Gerenciamento de Estados
-- Utiliza `ChangeNotifier` para atualizar a interface de forma reativa com base em mudanças de estado.
-- Suporta quatro estados principais:
-  - **Loading**: Exibe uma animação de carregamento (SpinKitCircle) com mensagem.
-  - **Success**: Exibe a lista de filmes.
-  - **Empty**: Informa quando não há resultados.
-  - **No Connection/Error**: Exibe mensagens de erro com botão de retry.
+- Utiliza `ChangeNotifier` para atualizações reativas.
+- Suporta quatro estados:
+  - **Loading**: Animação `SpinKitCircle` com mensagem, redimensionada para a resolução do dispositivo.
+  - **Success**: Lista de filmes.
+  - **Empty**: Mensagem para ausência de resultados.
+  - **No Connection/Error**: Mensagem com botão de retry.
 
 ### ✅ Interface Intuitiva
-- Navegação entre as seções "Filmes Populares" e "Busca" via uma barra de navegação inferior personalizada.
-- Usa `AnimatedSwitcher` com `FadeTransition` para transições suaves entre telas.
-- Estilização consistente com tema escuro, cores contrastantes e ícones personalizados.
+- Navegação entre "Filmes Populares" e "Busca" via barra inferior personalizada, com ícones responsivos.
+- Usa `AnimatedSwitcher` com `FadeTransition` para transições suaves.
+- Design responsivo com `ResponsivityUtils` para adaptar elementos a diferentes resoluções e orientações.
+- Tema escuro com cores contrastantes e ícones personalizados.
 
 ### ✅ Otimização de Performance
-- Cache de imagens via `CachedNetworkImage` para reduzir requisições de rede.
-- Verificação de conectividade antes de cada requisição para evitar falhas desnecessárias.
-- Uso de `AutomaticKeepAliveClientMixin` para manter o estado da lista de filmes populares.
+- Cache de imagens com `CachedNetworkImage` para reduzir requisições em telas de baixa resolução.
+- Verificação de conectividade antes de requisições.
+- Uso de `AutomaticKeepAliveClientMixin` para preservar estado da lista de filmes populares.
+
+---
+
+## 📱 Responsividade para Diferentes Resoluções
+
+O **TMDB App** foi projetado para funcionar em dispositivos com diferentes resoluções (de smartphones com telas pequenas a tablets com telas grandes, em orientações portrait e landscape). A responsividade é garantida por:
+
+- **ResponsivityUtils**: Classe utilitária que calcula dinamicamente:
+  - **Padding e Margens**: Ajustados com base em porcentagens do tamanho da tela (`shortestSide`, `screenHeight`) para evitar elementos cortados ou desproporcionais.
+  - **Tamanhos de Texto e Ícones**: Escalonados com `responsiveSize` para manter legibilidade e proporção em telas de baixa (ex.: 480x800) e alta resolução (ex.: 1440x3200).
+  - **Bordas Arredondadas**: Ajustadas com `responsiveBorderRadius` para consistência visual.
+- **Layout Adaptável**:
+  - Uso de `Flexible` e `Expanded` para garantir que elementos como pôsteres e textos se ajustem ao espaço disponível.
+  - `ListView.builder` com `shrinkWrap` e `physics` personalizáveis para otimizar rolagem em telas maiores.
+- **Testes em Diferentes Dispositivos**:
+  - Suporte a dispositivos de baixa resolução (ex.: 720p) com tamanhos reduzidos de ícones e textos.
+  - Suporte a tablets e dispositivos de alta resolução (ex.: 2K, 4K) com elementos ampliados proporcionalmente.
+  - Adaptação a mudanças de orientação (portrait/landscape) sem quebras de layout.
+- **Prevenção de Overflow**:
+  - Textos longos usam `TextOverflow.ellipsis` para evitar transbordo.
+  - `SafeArea` e `resizeToAvoidBottomInset: false` garantem que elementos não sejam obstruídos por barras de sistema ou teclados.
+- **Imagens Otimizadas**:
+  - `CachedNetworkImage` carrega imagens em resolução apropriada (`w500` da TMDB API) para equilibrar qualidade e performance.
+  - Placeholders e ícones de erro redimensionados para manter consistência visual.
+
+Essa abordagem garante que o app seja visualmente consistente e funcional em dispositivos de diferentes densidades de pixels (DPI), tamanhos de tela e proporções.
 
 ---
 
 ## 📡 Integração com Back-end
 
 ### API do TMDB
-O aplicativo consome a API pública do **The Movie Database (TMDB)** para obter dados de filmes. Os principais endpoints utilizados são:
-
-- **`movie/popular`**: Retorna uma lista de filmes populares.
-- **`search/movie`**: Busca filmes com base em um termo de pesquisa.
-- **`movie/{movieId}`**: Obtém detalhes adicionais de um filme, como duração (`runtime`).
-
-- **Autenticação**: Todas as requisições incluem uma chave de API (`api_key`) definida em `ApiConstants.apiKey`.
+- **Endpoints**:
+  - `movie/popular`: Lista de filmes populares.
+  - `search/movie`: Busca de filmes.
+  - `movie/{movieId}`: Detalhes do filme, como duração.
+- **Autenticação**: Chave de API em `ApiConstants.apiKey`.
 - **Base URL**: `https://api.themoviedb.org/3/`.
-- **Image Base URL**: `https://image.tmdb.org/t/p/w500` para carregar pôsteres.
+- **Image Base URL**: `https://image.tmdb.org/t/p/w500`.
 
 ### Modelo de Dados
-- **`MovieModel`**: Representa um filme com propriedades:
-  - `id`: Identificador único.
-  - `title`: Título do filme.
-  - `voteAverage`: Média de votos (0 a 10).
-  - `posterPath`: Caminho relativo do pôster.
-  - `runtime`: Duração em minutos (opcional, obtida do endpoint de detalhes).
-- **`MovieResponseDTO`**: Estrutura para mapear respostas de lista de filmes.
-- **`MovieDetailsResponseDTO`**: Estrutura para mapear detalhes de um filme específico.
+- **`MovieModel`**: Contém `id`, `title`, `voteAverage`, `posterPath`, `runtime`.
+- **`MovieResponseDTO`**: Mapeia respostas de listas.
+- **`MovieDetailsResponseDTO`**: Mapeia detalhes de filmes.
 
 ### Gerenciamento de Conexão e Erros
-- **Conectividade**: Verifica a conectividade antes de cada requisição usando `ConnectivityDriver`. Lança `ConnectionException` se não houver conexão.
-- **Tratamento de Erros**: O cliente HTTP (`DioClient`) usa interceptadores para tratar erros HTTP:
-  - **401**: Erro de autenticação (chave de API inválida).
+- **Conectividade**: Verificada via `ConnectivityDriver`, lançando `ConnectionException` se necessário.
+- **Erros HTTP** (via `DioClient`):
+  - **401**: Chave de API inválida.
   - **404**: Recurso não encontrado.
-  - **429**: Limite de requisições atingido.
+  - **429**: Limite de requisições.
   - **500+**: Serviço indisponível.
-  - Outros erros são tratados como falhas genéricas (`Failure`).
+  - Outros: Tratados como `Failure`.
 
 ---
 
 ## 🎨 Telas do Aplicativo
 
 ### Home Page
-- Tela principal com uma barra de navegação inferior contendo dois ícones (`home.png` e `search.png`) para alternar entre as seções.
-- Usa `Stack` para posicionar a barra de navegação sobre o conteúdo, com botões animados (`AnimatedContainer`) para indicar a seção ativa.
-- Suporta transições suaves entre seções usando `AnimatedSwitcher` com `FadeTransition`.
+- Barra de navegação inferior com ícones (`home.png` e `search.png`) para alternar seções, redimensionados para diferentes resoluções.
+- Usa `Stack` para posicionar a barra sobre o conteúdo, com botões animados (`AnimatedContainer`).
+- Transições suaves com `AnimatedSwitcher` e `FadeTransition`.
 
 ### Filmes Populares
-- Exibe uma lista de filmes populares em um `ListView.builder` com cartões (`Card`) estilizados.
-- Cada cartão contém:
-  - Pôster do filme (carregado via `CachedNetworkImage`).
-  - Título (limitado a duas linhas com elipse).
-  - Duração (ex.: "2h15m" ou "N/A" se indisponível).
-  - Nota média em um círculo azul com texto em negrito.
-- Estados de interface:
-  - **Carregando**: Animação `SpinKitCircle` com mensagem.
-  - **Erro/Sem Conexão**: Widget de estado com botão de retry.
-  - **Vazio**: Mensagem informando ausência de filmes.
+- Lista de filmes em `ListView.builder` com cartões estilizados (`Card`), adaptados para diferentes tamanhos de tela.
+- Cada cartão exibe:
+  - Pôster via `CachedNetworkImage`, escalado com `responsiveSize`.
+  - Título (máximo de duas linhas).
+  - Duração (ex.: "2h15m" ou "N/A").
+  - Nota média em círculo azul, com tamanho responsivo.
+- Estados: carregando (`SpinKitCircle`), erro/sem conexão (com retry), vazio.
 
 ### Busca
-- Contém um campo de texto estilizado com ícone de lupa e borda arredondada.
-- A busca é acionada com debounce (500ms) para otimizar requisições.
-- Resultados são exibidos em um `ListView` com pôster e título, separados por divisores.
-- Suporta os mesmos estados de interface da tela de filmes populares.
-- O teclado é ocultado ao tocar fora do campo de texto.
+- Campo de texto com ícone de lupa e borda arredondada, ajustados para a resolução do dispositivo.
+- Busca com debounce (500ms).
+- Resultados em `ListView` com divisores responsivos.
+- Suporta estados de interface semelhantes à tela de filmes populares.
+- Teclado ocultado ao tocar fora do campo.
 
 ---
 
 ## 🛠️ Ambiente de Desenvolvimento
 
 - **IDE**: Visual Studio Code ou Android Studio.
-- **API**: The Movie Database (TMDB).
-- **Gerenciador de Dependências**: Pub (Flutter).
-- **Dispositivos de Teste**: Emulador Android/iOS ou dispositivo físico com modo de depuração ativado.
-- **Ferramentas Adicionais**:
-  - Flutter DevTools para depuração.
-  - Postman ou similar para testar chamadas à API do TMDB (opcional).
+- **API**: TMDB.
+- **Gerenciador de Dependências**: Pub.
+- **Dispositivos de Teste**: Emulador Android/iOS ou dispositivo físico.
+- **Ferramentas**:
+  - Flutter DevTools.
+  - Postman (opcional, para testar API).
 
 ---
 
 ## 📦 Instalação
 
 ### 🔧 Pré-requisitos
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (versão 3.22.3 ou superior recomendada).
-- [Dart SDK](https://dart.dev/get-dart) (incluído com o Flutter).
-- Dispositivo físico ou emulador/simulador configurado para Android ou iOS.
-- Chave de API do TMDB (fornecida no código, mas pode ser substituída em `ApiConstants.apiKey`).
-- Conexão à internet para carregar dados da API.
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.22.3+ recomendada).
+- [Dart SDK](https://dart.dev/get-dart) (incluso no Flutter).
+- Dispositivo ou emulador Android/iOS.
+- Chave de API do TMDB (em `ApiConstants.apiKey`).
+- Conexão à internet.
 
 ### ▶️ Rodando o Projeto
 ```bash
 git clone https://github.com/{seu_usuario}/tmdb_app.git
-cd tbmdb_app
+cd tmdb_app
 flutter pub get
 flutter run
