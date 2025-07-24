@@ -130,6 +130,12 @@ Essa abordagem garante que o app seja visualmente consistente e funcional em dis
   - Duração (ex.: "2h15m" ou "N/A").
   - Nota média em círculo azul, com tamanho responsivo.
 - Estados: carregando (`SpinKitCircle`), erro/sem conexão (com retry), vazio.
+- **Imagens**:
+  | Tablet (Landscape) | Tablet (Portrait) |
+  |--------------------|-------------------|
+  | ![Tablet Popular Movies](views/landscape/tablet_popular_movies.png) | ![Tablet Popular Movies](views/portrait/tablet_popular_movies.png) |
+  | Smartphone (Landscape) | Smartphone (Portrait) |
+  | ![Smartphone Popular Movies](views/landscape/smartphone_popular_movies.png) | ![Smartphone Popular Movies](views/portrait/smartphone_popular_movies.png) |
 
 ### Busca
 - Campo de texto com ícone de lupa e borda arredondada, ajustados para a resolução do dispositivo.
@@ -137,6 +143,12 @@ Essa abordagem garante que o app seja visualmente consistente e funcional em dis
 - Resultados em `ListView` com divisores responsivos.
 - Suporta estados de interface semelhantes à tela de filmes populares.
 - Teclado ocultado ao tocar fora do campo.
+- **Imagens**:
+  | Tablet (Landscape) | Tablet (Portrait) |
+  |--------------------|-------------------|
+  | ![Tablet Search Movies](views/landscape/tablet_search_movies.png) | ![Tablet Search Movies](views/portrait/tablet_search_movies.png) |
+  | Smartphone (Landscape) | Smartphone (Portrait) |
+  | ![Smartphone Search Movies](views/landscape/smartphone_search_movies.png) | ![Smartphone Search Movies](views/portrait/smartphone_search_movies.png) |
 
 ---
 
